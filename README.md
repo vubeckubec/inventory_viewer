@@ -93,4 +93,5 @@ inventory_viewer/
 Viktor Kubec  
 BUT FIT Brno student  
 MIT License  
-GitHub: [vubeckubec/inventory_viewer](https://github.com/vubeckubec/inventory_viewer)
+GitHub: [vubeckubec/inventory_viewer](https://github.com/vubeckubec/inventory_viewer)  
+PyPi: [vubeckubec/inventory_viewer]((https://pypi.org/project/inventory-viewer/1.0/)) 
