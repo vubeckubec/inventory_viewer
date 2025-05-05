@@ -1,6 +1,9 @@
 """
-tables.py
+project: IBT24/25, xkubec03
+author: Viktor Kubec
+file: tables.py
 
+brief:
 Defines a custom Django Tables2 table for displaying NetBox Module objects.
 This table shows columns like SN, Datum, Ev. č., Umístění, Propoj, Poznámka,
 and Měřicí bod (drawn from standard model fields or custom fields). It also
@@ -107,6 +110,7 @@ class ModulyCustomTable(tables.Table):
         """
         cables = set()
         device = record.device
+        print(device)
         if device:
             port_collections = [
                 device.frontports.filter(module=record),
@@ -128,38 +132,46 @@ class ModulyCustomTable(tables.Table):
             if isinstance(real_term, DeviceInterface):
                 if real_term.device:
                     return f"{real_term.device.name}/{real_term.name}"
-                else:
-                    return f"(No device)/{real_term.name}"
-            elif isinstance(real_term, VMInterface):
+                return f"(No device)/{real_term.name}"
+            if isinstance(real_term, VMInterface):
                 if real_term.virtual_machine:
                     return f"{real_term.virtual_machine.name}/{real_term.name}"
-                else:
-                    return f"(No VM)/{real_term.name}"
-            elif isinstance(real_term, (FrontPort, RearPort)):
+                return f"(No VM)/{real_term.name}"
+            if isinstance(real_term, (FrontPort, RearPort)):
                 if real_term.device:
                     return f"{real_term.device.name}/{real_term.name}"
-                else:
-                    return f"(Port no device)/{real_term.name}"
+                return f"(Port no device)/{real_term.name}"
             return str(real_term)
+        print(cables)
 
         for cable in cables:
+            # Load every termination (A, B, …) linked to this cable
             endpoints = list(cable.terminations.all())
-            if len(endpoints) > 2 or len(endpoints) < 1:
+
+            # Skip cables with zero or more than two terminations (invalid cases)
+            if len(endpoints) == 0 or len(endpoints) > 2:
                 continue
 
             real_term_objs = []
             for cterm in endpoints:
                 ct = cterm.termination_type
                 obj_id = cterm.termination_id
-                real_term = ct.get_object_for_this_type(id=obj_id)
-                real_term_objs.append(real_term)
+                # Resolve the concrete termination object (Interface, VMInterface, FrontPort, RearPort)
+                real_term_objs.append(ct.get_object_for_this_type(id=obj_id))
 
+            # --- Build the human-readable description --------------------------
             if len(real_term_objs) == 2:
                 desc_a = describe_real_term(real_term_objs[0])
                 desc_b = describe_real_term(real_term_objs[1])
                 results.append(f"{desc_a} <-> {desc_b}")
 
-        return "; ".join(results) if results else ""
+            elif len(real_term_objs) == 1:
+                # Only one side present; mark the opposite side as unconnected
+                desc_a = describe_real_term(real_term_objs[0])
+                results.append(f"{desc_a} <-> (nezapojeno)")   # adjust wording if needed
+
+            # Return a single string with semicolons between individual cable descriptions
+            return "; ".join(results) if results else ""
 
     def render_merici_bod(self, record):
         """

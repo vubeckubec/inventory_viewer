@@ -1,6 +1,9 @@
 """
-views.py
+project: IBT24/25, xkubec03
+author: Viktor Kubec
+file: views.py
 
+brief:
 Provides a view class to display NetBox modules grouped by their module type.
 Utilizes a custom Django Tables2 table (ModulyCustomTable) to format and render
 the module data (e.g., SN, date, asset tag, location, cable connections, notes).

@@ -77,6 +77,10 @@ inventory_viewer/
 ```
 
 ## Changelog
+
+### v1.0.1
+- Plugin now shows cables which have only one termination (termination A)
+- Added headers to each file
 ### v1.0
 - Initial release: Displays modules grouped by module type in tables
 - Shows cable connections, device location, and custom fields

@@ -1,6 +1,9 @@
 """
-inventory_viewer/plugin.py
+project: IBT24/25, xkubec03
+author: Viktor Kubec
+file: _init__.py
 
+brief:
 This file defines the "inventory_viewer" plugin configuration for NetBox.
 The plugin provides a tabular view of devices and modules stored in NetBox.
 """
